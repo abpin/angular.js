@@ -5,22 +5,31 @@ describe('angular.scenario.Application', function() {
   var app, frames;
 
   function callLoadHandlers(app) {
-    var handler = app.getFrame_().triggerHandler('load')
+    var handler = app.getFrame_().triggerHandler('load');
   }
 
   beforeEach(function() {
+    document.body.innerHTML = '';
     frames = _jQuery("<div></div>");
+    _jQuery(document.body).append(frames);
     app = new angular.scenario.Application(frames);
   });
 
-  it('should return new $window and $document after navigate', function() {
+
+  afterEach(function() {
+    _jQuery('iframe').off(); // cleanup any leftover onload handlers
+    document.body.innerHTML = '';
+  });
+
+
+  it('should return new $window and $document after navigateTo', function() {
     var called;
     var testWindow, testDocument, counter = 0;
     app.getWindow_ = function() {
       return {x:counter++, document:{x:counter++}};
     };
     app.navigateTo('http://www.google.com/');
-    app.executeAction(function($document, $window) {
+    app.executeAction(function($window, $document) {
       testWindow = $window;
       testDocument = $document;
     });
